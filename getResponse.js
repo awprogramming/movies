@@ -4,9 +4,6 @@ $(function(){
 	$("#crunch").click(function(){
 	
 
-
-
-
 	$.ajax('requestMovies.php',   
 	         {
 	             type: 'GET',
@@ -18,16 +15,10 @@ $(function(){
 
 	var checkt1 = function(jsonResponse)
 	{
-		
-		if(jsonResponse.code!=null)
-		{
-			alert("ERROR with movie 1");
-		}
-		else
-		{
-			var actors1 = jsonResponse[0].actors;
+			var actors1 = jsonResponse.cast;
 
-			actorIds = _.pluck(actors1,"actorId");
+			actorIds = _.pluck(actors1,"id");
+			console.log(actorIds);
 			$.ajax('requestMovies.php',   
 	         {
 	             type: 'GET',
@@ -37,29 +28,21 @@ $(function(){
 	             success: function (data) {checkt2($.parseJSON(data),this.actorIds1);},
 	             error: function () {alert('Error receiving JSON');}
 				});
-		}
 	}
 
 	var checkt2 = function(jsonResponse,actorIds1)
 	{
-		
-		if(jsonResponse.code!=null)
-		{
-			alert("ERROR with movie 2");
-		}
-		else
-		{
-			var actors2 = jsonResponse[0].actors;
-			actorIds2 = _.pluck(actors2,"actorId");
+			var actors2 = jsonResponse.cast;
+			actorIds2 = _.pluck(actors2,"id");
+			console.log(actorIds2);
 			findIntersection(actorIds1,actorIds2);
-		}
 	}
 
 	var findIntersection = function(actorIds1,actorIds2){
 
 		var intersection = _.intersection(actorIds1,actorIds2);
 		if(intersection.length > 0)
-			requestActors(_.intersection(actorIds1,actorIds2));
+			requestActors(intersection);
 		else
 			alert("No matches found");
 
@@ -80,13 +63,9 @@ $(function(){
 	});
 
 	var placeActors = function(jsonResponse){
-
 		var actors = $.parseJSON(jsonResponse);
 		var placementDiv = $('#actors');
 		placementDiv.html("");
-
-		console.log(actors);
-
 		for(var i = 0; i<actors.length;i++)
 		{
 			var actorDiv = $('<div></div>');
