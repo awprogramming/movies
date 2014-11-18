@@ -34,19 +34,25 @@ $(function(){
 			var actors2 = jsonResponse.cast;
 			actorIds2 = _.pluck(actors2,"id");
 			console.log(actorIds2);
-			findIntersection(actorIds1,actorIds2);
-	}
+			var setsArray = [];
+			setsArray.push(actorIds1);
+			setsArray.push(actorIds2);
 
-	var findIntersection = function(actorIds1,actorIds2){
-
-		var intersection = _.intersection(actorIds1,actorIds2);
-		if(intersection.length > 0)
-			requestActors(intersection);
-		else
-			alert("No matches found");
-
+			createFormalSets(setsArray);
+			//findIntersection(actorIds1,actorIds2);
 
 	}
+
+	// var findIntersection = function(actorIds1,actorIds2){
+
+	// 	var intersection = _.intersection(actorIds1,actorIds2);
+	// 	if(intersection.length > 0)
+	// 		requestActors(intersection);
+	// 	else
+	// 		alert("No matches found");
+
+
+	// }
 
 	var requestActors = function(idList){
 		
