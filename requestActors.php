@@ -18,6 +18,7 @@
 		$response = file_get_contents($requestURL);
 		$decoded = json_decode($response);
 		$out[] = array(
+		'id' => $id,
         'name' => $decoded->name,
         'photoURL' => $baseURL . $size . $decoded->profile_path,
         );

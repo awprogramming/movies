@@ -49,31 +49,69 @@ $(function(){
 	}
 
 	var requestActors = function(idList){
-		$.ajax('requestActors.php',   
-	         {
-	             type: 'GET',
-	             data:{actorIds:JSON.stringify(idList)},
-	             cache: false,
-	             success: function (data) {placeActors(data);},
-	             error: function () {alert('Error receiving JSON');}
-				});
+		
+		var cached = [];
+		for(var i = 0; i<idList.length;i++)
+		{
+			if(localStorage.getItem(idList[i]))
+			{
+				cached.push(idList[i]);
+				idList.splice(i,1);
+				i--;
+			}
+		}
+
+		if(idList.length != 0)
+		{
+			$.ajax('requestActors.php',   
+		         {
+		             type: 'GET',
+		             data:{actorIds:JSON.stringify(idList)},
+		             cache: false,
+		             success: function (data) {placeActors(cached,data);},
+		             error: function () {alert('Error receiving JSON');}
+					});
+		}
+		else
+		{
+			placeActors(cached,"");
+		}
 	}
 
 	});
 
-	var placeActors = function(jsonResponse){
-		var actors = $.parseJSON(jsonResponse);
+	var placeActors = function(cached, jsonResponse){
+		
 		var placementDiv = $('#actors');
 		placementDiv.html("");
-		for(var i = 0; i<actors.length;i++)
+		if(cached.length!=0)
 		{
-			var actorDiv = $('<div></div>');
-			var actorImage = $('<img src="'+actors[i].photoURL+'">');
-			actorDiv.append(actorImage);
-			var actorName = $('<p>'+actors[i].name+'</p>');
-			actorDiv.append(actorName);
-			placementDiv.append(actorDiv);
+			for(var i = 0; i<cached.length;i++)
+			{
+				placement(localStorage.getItem(cached[i]),localStorage.getItem(cached[i]+'pic'));
+			}
 		}
+		if(jsonResponse!="")
+		{
+			var actors = $.parseJSON(jsonResponse);
+			for(var i = 0; i<actors.length;i++)
+			{
+				localStorage.setItem(actors[i].id,actors[i].name);
+				localStorage.setItem(actors[i].id+'pic',actors[i].photoURL);
+				placement(actors[i].name,actors[i].photoURL)
+			}
+		}
+	}
+
+	var placement = function(name, photoURL){
+		
+		var placementDiv = $('#actors');
+		var actorDiv = $('<div></div>');
+		var actorImage = $('<img src="'+photoURL+'">');
+		actorDiv.append(actorImage);
+		var actorName = $('<p>'+name+'</p>');
+		actorDiv.append(actorName);
+		placementDiv.append(actorDiv);
 	}
 
 	
