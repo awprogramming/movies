@@ -1,72 +1,82 @@
+var setsArray = [];
 $(function(){
 
-	$("#crunch").click(function(){
 	
-
-	$.ajax('requestMovies.php',   
-	         {
-	             type: 'GET',
-	             data:{title:$("#title1").val()},
-	             cache: false,
-	             success: function (data) {checkt1($.parseJSON(data))},
-	             error: function () {alert('Error receiving JSON');}
+	
+	$("#crunch").click(function(){
+	setsArray = [];
+	sets =[];
+	overlaps = [];
+	$('.mds').html("");
+	$('#actors').html("");
+	$('#titlePosition').html("");
+	requestMovies(0);
 	});
+});
 
-	var checkt1 = function(jsonResponse)
+var requestMovies = function(inputNum)
+{
+	if($(".title")[inputNum]!=null)
 	{
-			var actors1 = jsonResponse.cast;
-
-			actorIds = _.pluck(actors1,"id");
-			console.log(actorIds);
+		var index = inputNum+1;
+		var title = $(".title:nth-child("+index+")").val();
+		var set = new Object();
+		set.title = title;
+		var forCache = $.trim(title.toLowerCase());
+		if(localStorage.getItem(forCache))
+		{
+			set.actors = JSON.parse(localStorage.getItem(forCache));
+			setsArray.push(set);
+			inputNum++;
+			requestMovies(inputNum);
+		}
+		else
+		{
 			$.ajax('requestMovies.php',   
-	         {
+	        {
 	             type: 'GET',
-	             actorIds1:actorIds,
-	             data:{title:$("#title2").val()},
+	             set:set,
+	             inputNum:inputNum,
+	             data:{title:title},
 	             cache: false,
-	             success: function (data) {checkt2($.parseJSON(data),this.actorIds1);},
+	             success: function (data) {pullIds($.parseJSON(data),this.set,this.inputNum)},
 	             error: function () {alert('Error receiving JSON');}
-				});
+			});
+		}
 	}
-
-	var checkt2 = function(jsonResponse,actorIds1)
+	else
 	{
-			var actors2 = jsonResponse.cast;
-			actorIds2 = _.pluck(actors2,"id");
-			console.log(actorIds2);
-			var setsArray = [];
-			setsArray.push(actorIds1);
-			setsArray.push(actorIds2);
-
-			createFormalSets(setsArray);
-			//findIntersection(actorIds1,actorIds2);
-
+		requestActors(0);
 	}
+}
+	
+var pullIds = function(jsonResponse,curSet,curInputNum)
+{
+	var actors = jsonResponse.cast;
+	actorIds = _.pluck(actors,"id");
+	localStorage.setItem($.trim(curSet.title.toLowerCase()),JSON.stringify(actorIds));
+	curSet.actors = actorIds;
+	setsArray.push(curSet);
+	curInputNum++;
+	requestMovies(curInputNum);
+}
 
-	// var findIntersection = function(actorIds1,actorIds2){
-
-	// 	var intersection = _.intersection(actorIds1,actorIds2);
-	// 	if(intersection.length > 0)
-	// 		requestActors(intersection);
-	// 	else
-	// 		alert("No matches found");
-
-
-	// }
-
-	var requestActors = function(idList){
+var requestActors = function(curSet)
+{
+	if(setsArray[curSet]!=null)
+	{
+		var idList = setsArray[curSet].actors.slice(0);
+		//cache all actors for later use
 		
-		var cached = [];
-		for(var i = 0; i<idList.length;i++)
+		for(var i = 0; i < idList.length; i++)
 		{
 			if(localStorage.getItem(idList[i]))
 			{
-				cached.push(idList[i]);
 				idList.splice(i,1);
 				i--;
 			}
 		}
-
+		
 		if(idList.length != 0)
 		{
 			$.ajax('requestActors.php',   
@@ -74,52 +84,33 @@ $(function(){
 		             type: 'GET',
 		             data:{actorIds:JSON.stringify(idList)},
 		             cache: false,
-		             success: function (data) {placeActors(cached,data);},
+		             success: function (data) {finishCaching(data,curSet);},
 		             error: function () {alert('Error receiving JSON');}
 					});
 		}
 		else
 		{
-			placeActors(cached,"");
+			curSet++;
+			requestActors(curSet);
 		}
 	}
-
-	});
-
-	var placeActors = function(cached, jsonResponse){
+	else
+	{
 		
-		var placementDiv = $('#actors');
-		placementDiv.html("");
-		if(cached.length!=0)
-		{
-			for(var i = 0; i<cached.length;i++)
-			{
-				placement(localStorage.getItem(cached[i]),localStorage.getItem(cached[i]+'pic'));
-			}
-		}
-		if(jsonResponse!="")
-		{
-			var actors = $.parseJSON(jsonResponse);
-			for(var i = 0; i<actors.length;i++)
-			{
-				localStorage.setItem(actors[i].id,actors[i].name);
-				localStorage.setItem(actors[i].id+'pic',actors[i].photoURL);
-				placement(actors[i].name,actors[i].photoURL)
-			}
-		}
+		createFormalSets(setsArray);
 	}
+ }
 
-	var placement = function(name, photoURL){
-		
-		var placementDiv = $('#actors');
-		var actorDiv = $('<div></div>');
-		var actorImage = $('<img src="'+photoURL+'">');
-		actorDiv.append(actorImage);
-		var actorName = $('<p>'+name+'</p>');
-		actorDiv.append(actorName);
-		placementDiv.append(actorDiv);
-	}
-
+ var finishCaching = function(names,curSet)
+ {
+ 	var actors = JSON.parse(names);
 	
+	for(var i = 0; i<actors.length; i++)
+	{
+		localStorage.setItem(actors[i].id,actors[i].name);
+		localStorage.setItem(actors[i].id+'pic',actors[i].photoURL);
+	}
+	curSet++;
+	requestActors(curSet);
+ }
 
-});

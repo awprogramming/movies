@@ -5,7 +5,7 @@
 	$response = file_get_contents($requestURL);
 	$decoded = json_decode($response);
 	$baseURL = $decoded->images->base_url;
-	$size = $decoded->images->profile_sizes[1];
+	$size = $decoded->images->profile_sizes[0];
 
 
 	$actorList= json_decode($_GET['actorIds']);
