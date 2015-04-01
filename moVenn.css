@@ -1,0 +1,47 @@
+.venntooltip {
+position: absolute;
+text-align: center;
+background: #333;
+color: #ddd;
+padding: 2px;
+border: 0px;
+border-radius: 8px;
+opacity: 0;
+}
+.mds{
+	float:left;
+}
+.item {
+    width: 100px;
+    height: 150px;
+    float: left;
+    margin-top: 10px;
+    margin-left: 5px;
+    border: 2px solid #ccc;
+    background: #ffeeaa;
+    border-radius: 5px;
+    padding:10px;
+}
+
+#container{
+    width: 85%;
+    height:100%;
+    margin-left:auto;
+    margin-right:auto;
+    
+}
+#inputs{
+    text-align: center;
+}
+#clearfloat{
+    clear: both;
+}
+body{
+    background-color:#F3EFE6;
+}
+#desc{
+    margin: 20px;
+}
+h1{
+    text-align: center;
+}

@@ -1,7 +1,9 @@
 <html>
 <head>
+<title>Let's get moVenn</title>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+<link rel="stylesheet" href="moVenn.css">
 <script src="http://d3js.org/d3.v2.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/masonry/3.1.5/masonry.pkgd.min.js"></script>
 <script src='venn.js'></script>
@@ -14,46 +16,30 @@
 <script src='getResponse.js'></script>
 <!--<script src='vennLogic.js'></script> -->
 <script src='jvennTest.js'></script>
-<style>
-.venntooltip {
-position: absolute;
-text-align: center;
-background: #333;
-color: #ddd;
-padding: 2px;
-border: 0px;
-border-radius: 8px;
-opacity: 0;
-}
-.mds{
-	float:left;
-}
-.item {
-    width: 100px;
-    height: 150px;
-    float: left;
-    margin-top: 10px;
-    margin-left: 5px;
-    border: 2px solid #ccc;
-    background: #ffeeaa;
-    border-radius: 5px;
-    padding:10px;
-    overflow:scroll;
-}
-</style>
-
 </head>
 <body>
-	<div>
-		<input class="title" placeholder="Movie/TV Show"></input>
-		<input class="title" placeholder="Movie/TV Show"></input>
-		<button id="add">+</button>
-		<button id="remove">-</button>
-		<button id="crunch">Crunch</button>
-		<button id="clear">Clear Cache</button>
+	<div id="container">
+		<h1>Lets get moVenn</h1>
+		<div>
+			<p id="desc">While watching Men in Black 2 a few months back I saw an actor who I recognized not by name, but from the Fox comedy Brooklyn Nine Nine. While I could have just gone to IMDB and seek out the common name of my mystery actor I was inspired to write this small application. With it, one can search up to 6 movies or television shows and have a beautiful venn diagram generated showing similar actors between the search items.
+			</br>
+			The Movie Database API is used to search for actors by movie.
+			</br>
+			The jVenn jQuery Plugin is used to generate the venn diagrams.
+			</p>
+		</div>
+		<div id="inputs">
+			<input class="title" placeholder="Movie/TV Show"></input>
+			<input class="title" placeholder="Movie/TV Show"></input>
+			<button id="add">+</button>
+			<button id="remove">-</button>
+			<button id="crunch">Crunch</button>
+			<button id="clear">Clear Cache</button>
+		</div>
+		<div class="mds"></div>
+		<h1 id="titlePosition"></h1>
+		<div id="actors"></div>
+		<div id="clearfloat">Hello World</div>
 	</div>
-	<div class="mds"></div>
-	<h1 id="titlePosition"></h1>
-	<div id="actors"></div>
 </body>
 </html>
